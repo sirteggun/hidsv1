@@ -1,4 +1,4 @@
-# CORE-HIDS
+
 
 ## Overview
 
@@ -155,6 +155,8 @@ System parameters can be customized inside:
 ```bash
 src/config.py
 ```
+
+---
 
 ## Roadmap
 
