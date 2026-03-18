@@ -1,14 +1,13 @@
-# CORE-HIDS
-Overview
+# CORE-HIDS 🛡️
+## Overview 🔍
 
-CORE-HIDS is a research-oriented Host-based Intrusion Detection System (HIDS) designed to monitor system behavior and detect anomalies.
+CORE-HIDS is a research-oriented Host-based Intrusion Detection System (HIDS) for monitoring system behavior and detecting anomalies.
 
-It is modular and flexible, separating event acquisition, analysis, alerting, and persistence, making it easy to extend and integrate new detection techniques based on rules, statistics, or machine learning.
+It is modular and flexible, separating event acquisition, analysis, alerting, and persistence. This makes it easy to extend with rule-based, statistical, or ML-based detection methods.
 
-CORE-HIDS serves as both a practical monitoring solution and a research platform for studying host-based threat detection and automated security response.
+CORE-HIDS works both as a practical monitoring tool and as a research platform for studying host-based threat detection and automated response strategies.
 
-## Project Structure
-
+## Project Structure 🗂️
 CORE-HIDS/
 ├── src/
 │   ├── __init__.py
@@ -34,10 +33,9 @@ CORE-HIDS/
 ├── README.md
 ├── pyproject.toml
 └── requirements.txt
+## Architecture ⚙️
 
-## Architecture
-
-CORE-HIDS follows a modular pipeline:
+#### CORE-HIDS uses a modular detection pipeline:
 
 Event Acquisition → Analysis → Alert Generation → Logging & Persistence → Concurrent Processing
 
@@ -47,54 +45,56 @@ detector.py – orchestrates the detection workflow
 
 baseline.py – behavioral profiling for anomaly detection
 
-alerts.py – manages alert generation and notifications
+alerts.py – generates actionable alerts
 
-persistence.py – stores data and system telemetry
+persistence.py – stores telemetry and event history
 
-worker.py – supports parallel execution for high performance
+worker.py – supports parallel processing for high performance
 
-## Installation
+## Installation 💻
 git clone https://github.com/SirTeggun/CORE-HIDS.git
 cd CORE-HIDS
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-Usage
-python -m src.main
-Configuration
 
-System parameters can be customized in:
+## Usage ▶️
+python -m src.main
+Configuration ⚙️
+
+### System parameters can be customized in:
 
 src/config.py
-Roadmap
 
-Full modularization of the detection pipeline
+### Roadmap 🛠️
+
+Modular pipeline improvements
 
 DetectionEngine refactor
 
-Rule abstraction and severity/escalation handling
+Rule abstraction & severity/escalation management
 
-Persistence improvements and performance optimization
+Persistence upgrades & performance optimization
 
-### Contributing
+### Contributing 🤝
 
 Fork the repository
 
 Create a feature branch
 
-Implement and test your changes
+Implement and test changes
 
-Open a Pull Request with a detailed explanation
+Open a Pull Request with detailed explanation
 
-### Tests
+### Tests ✅
 pytest tests/test_detector.py -v
 
-Tests cover alerts, baseline/anomaly detection, detection engine, and log monitoring.
+Covers alerts, baseline/anomaly detection, detection engine, and log monitoring.
 
-### License
+### License 📄
 
 See the LICENSE file.
 
-### Security Notice
+### Security Notice ⚠️
 
 CORE-HIDS is a research project. Avoid exposing sensitive components without proper hardening and access control.
