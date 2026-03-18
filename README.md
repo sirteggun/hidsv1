@@ -80,7 +80,9 @@ pip install -r requirements.txt
 ```
 
 ## Usage ▶️
+```bash
 python -m src.main
+```
 Configuration ⚙️
 
 ### System parameters can be customized in:
@@ -108,7 +110,9 @@ Implement and test changes
 Open a Pull Request with detailed explanation
 
 ### Tests ✅
+```bash
 pytest tests/test_detector.py -v
+```
 
 Covers alerts, baseline/anomaly detection, detection engine, and log monitoring.
 
