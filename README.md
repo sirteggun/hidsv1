@@ -8,35 +8,35 @@ It is modular and flexible, separating event acquisition, analysis, alerting, an
 CORE-HIDS serves as both a practical monitoring solution and a research platform for studying host-based threat detection and automated security response.
 
 ## Project Structure
-src/
-├── __init__.py
-├── alerts.py
-├── baseline.py
-├── config.py
-├── detection_context.py
-├── detector.py
-├── executor.py
-├── log_monitor.py
-├── logger.py
-├── main.py
-├── persistence.py
-└── worker.py
+CORE-HIDS/
+├── src/
+│   ├── __init__.py
+│   ├── alerts.py
+│   ├── baseline.py
+│   ├── config.py
+│   ├── detection_context.py
+│   ├── detector.py
+│   ├── executor.py
+│   ├── log_monitor.py
+│   ├── logger.py
+│   ├── main.py
+│   ├── persistence.py
+│   └── worker.py
+├── tests/
+│   ├── __init__.py
+│   ├── test_alerts.py
+│   ├── test_baseline.py
+│   ├── test_detector.py
+│   └── test_log_monitor.py
+├── .gitignore
+├── LICENSE
+├── README.md
+├── pyproject.toml
+└── requirements.txt
 
-tests/
-├── __init__.py
-├── test_alerts.py
-├── test_baseline.py
-├── test_detector.py
-└── test_log_monitor.py
+## Architecture
 
-.gitignore
-LICENSE
-README.md
-pyproject.toml
-requirements.txt
-Architecture
-
-## CORE-HIDS follows a modular pipeline:
+CORE-HIDS follows a modular pipeline:
 
 Event Acquisition → Analysis → Alert Generation → Logging & Persistence → Concurrent Processing
 
