@@ -12,3 +12,13 @@ MAX_FAILED_ATTEMPTS = 5
 TIME_WINDOW = 60
 
 LOG_LEVEL = logging.DEBUG if os.getenv("DEBUG_MODE", "true").lower() == "true" else logging.INFO
+
+HIDS_LOG_FILE = "hids_main.log"
+
+QUEUE_TIMEOUT = 1.0
+
+WORKER_SHUTDOWN_TIMEOUT = 10.0
+
+MAX_QUEUE_SIZE = 10000
+
+NUM_WORKERS = 1
