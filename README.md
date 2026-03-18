@@ -1,11 +1,11 @@
-# CORE-HIDS 🛡️
+# HIDSV1 🛡️
 ## Overview 🔍
 
-CORE-HIDS is a research-oriented Host-based Intrusion Detection System (HIDS) for monitoring system behavior and detecting anomalies.
+HIDSV1 is a research-oriented Host-based Intrusion Detection System (HIDS) for monitoring system behavior and detecting anomalies.
 
 It is modular and flexible, separating event acquisition, analysis, alerting, and persistence. This makes it easy to extend with rule-based, statistical, or ML-based detection methods.
 
-CORE-HIDS works both as a practical monitoring tool and as a research platform for studying host-based threat detection and automated response strategies.
+HIDSV1 works both as a practical monitoring tool and as a research platform for studying host-based threat detection and automated response strategies.
 
 ## Project Structure 🗂️
 ```bash
@@ -37,7 +37,7 @@ CORE-HIDS/
 ```
 ## Architecture ⚙️
 
-#### CORE-HIDS uses a modular detection pipeline:
+#### HIDSV1 uses a modular detection pipeline:
 
 Event Acquisition → Analysis → Alert Generation → Logging & Persistence → Concurrent Processing
 
@@ -56,12 +56,12 @@ worker.py – supports parallel processing for high performance
 ## Installation 💻
 ```bash
 # Cloning the repo
-git clone https://github.com/SirTeggun/CORE-HIDS.git
+git clone https://github.com/SirTeggun/HIDSV1.git
 ```
 
 ```bash
 # Go into the project folder
-cd CORE-HIDS
+cd HIDSV1
 ```
 ```bash
 # Create a virtual environment
@@ -122,4 +122,4 @@ See the LICENSE file.
 
 ### Security Notice ⚠️
 
-CORE-HIDS is a research project. Avoid exposing sensitive components without proper hardening and access control.
+HIDSV1 is a research project. Avoid exposing sensitive components without proper hardening and access control.
