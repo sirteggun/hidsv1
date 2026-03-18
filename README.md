@@ -8,6 +8,7 @@ It is modular and flexible, separating event acquisition, analysis, alerting, an
 CORE-HIDS works both as a practical monitoring tool and as a research platform for studying host-based threat detection and automated response strategies.
 
 ## Project Structure 🗂️
+```bash
 CORE-HIDS/
 ├── src/
 │   ├── __init__.py
@@ -33,6 +34,7 @@ CORE-HIDS/
 ├── README.md
 ├── pyproject.toml
 └── requirements.txt
+```
 ## Architecture ⚙️
 
 #### CORE-HIDS uses a modular detection pipeline:
@@ -52,11 +54,30 @@ persistence.py – stores telemetry and event history
 worker.py – supports parallel processing for high performance
 
 ## Installation 💻
+```bash
+# Cloning the repo
 git clone https://github.com/SirTeggun/CORE-HIDS.git
+```
+
+```bash
+# Go into the project folder
 cd CORE-HIDS
+```
+```bash
+# Create a virtual environment
 python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
+```
+```bash
+# Activate the virtual environment
+# Linux / Mac
+source .venv/bin/activate
+# Windows
+.venv\Scripts\activate
+```
+```bash
+# Install dependencies
 pip install -r requirements.txt
+```
 
 ## Usage ▶️
 python -m src.main
