@@ -15,7 +15,6 @@ class WorkerMetrics:
     failure_count: int = 0
     ewma_processing_time: Optional[float] = None
     last_reset: float = field(default_factory=time.time)
-
     _lock: threading.Lock = field(default_factory=threading.Lock, repr=False)
 
     def update(self, success: bool, processing_time: float) -> None:
@@ -129,7 +128,7 @@ class Worker:
                 continue
             except (KeyboardInterrupt, SystemExit):
                 raise
-            except Exception as e:
+            except Exception:
                 logger.exception("Worker %d: unexpected error getting item", self.worker_id)
                 continue
 
@@ -137,7 +136,7 @@ class Worker:
             success = False
             try:
                 success = self._process_item(ip)
-            except Exception as e:
+            except Exception:
                 logger.exception("Worker %d: error processing IP %s", self.worker_id, ip)
             finally:
                 elapsed = time.monotonic() - start
@@ -196,9 +195,6 @@ def detection_worker(
     heartbeat_dict: Optional[Dict[int, float]] = None,
     worker_id: int = 0,
 ) -> None:
-    """
-    Funzione legacy per compatibilità. Preferire l'uso della classe Worker.
-    """
     worker = Worker(
         event_queue=event_queue,
         engine=engine,
