@@ -8,6 +8,7 @@ It is modular and flexible, separating event acquisition, analysis, alerting, an
 CORE-HIDS serves as both a practical monitoring solution and a research platform for studying host-based threat detection and automated security response.
 
 ## Project Structure
+
 CORE-HIDS/
 ├── src/
 │   ├── __init__.py
