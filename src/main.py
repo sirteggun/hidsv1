@@ -5,13 +5,15 @@ import threading
 import signal
 import atexit
 import time
+import queue
 from logging.handlers import RotatingFileHandler
 
 from src.alerts import setup_alert_system
 from src.worker import detection_worker
 from src.config import (
     LOG_DIR, LOG_FILE, HIDS_LOG_FILE, QUEUE_MAXSIZE, QUEUE_TIMEOUT,
-    WORKER_SHUTDOWN_TIMEOUT, LOG_PATTERNS_PATH, NUM_WORKERS
+    WORKER_SHUTDOWN_TIMEOUT, LOG_PATTERNS_PATH, NUM_WORKERS,
+    ALERT_QUEUE_MAXSIZE, DLQ_MAXSIZE
 )
 from src.detector import DetectionEngine
 from src.collectors.log_collector import LogCollector
@@ -19,6 +21,8 @@ from src.pipeline.queue_manager import PrioritizedQueue
 from src.utils import load_patterns_from_yaml
 
 event_queue = PrioritizedQueue(maxsize=QUEUE_MAXSIZE)
+alert_queue = queue.Queue(maxsize=ALERT_QUEUE_MAXSIZE)
+dlq = queue.Queue(maxsize=DLQ_MAXSIZE)
 shutdown_event = threading.Event()
 logger = logging.getLogger("HIDS.Main")
 exit_code = 0
@@ -31,6 +35,12 @@ def _setup_logging():
     console = logging.StreamHandler(sys.stdout)
     console.setFormatter(logging.Formatter("%(asctime)s | %(levelname)s | %(name)s | %(message)s"))
     logging.basicConfig(level=logging.INFO, handlers=[handler, console])
+    
+    # Crea file di log vuoto per evitare warning
+    system_log_path = os.path.join(LOG_DIR, LOG_FILE)
+    if not os.path.exists(system_log_path):
+        with open(system_log_path, 'w') as f:
+            f.write("")
 
 def _signal_handler(signum, frame):
     logger.info("Received shutdown signal %d", signum)
@@ -97,7 +107,7 @@ def main():
         for i in range(NUM_WORKERS):
             t = threading.Thread(
                 target=_worker_wrapper,
-                args=(detection_worker, (event_queue, engine, shutdown_event), {}),
+                args=(detection_worker, (event_queue, alert_queue, dlq, engine, shutdown_event), {'worker_id': i}),
                 daemon=False,
                 name=f"DetectionWorker-{i}"
             )

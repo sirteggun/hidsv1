@@ -9,7 +9,7 @@ HIDSV1 works both as a practical monitoring tool and as a research platform for 
 
 ## Project Structure 🗂️
 ```bash
-CORE-HIDS/
+HIDSV1
 ├── src/
 │   ├── __init__.py
 │   ├── alerts.py
@@ -22,13 +22,36 @@ CORE-HIDS/
 │   ├── logger.py
 │   ├── main.py
 │   ├── persistence.py
-│   └── worker.py
+│   ├── worker.py
+│   ├── utils.py
+│   │
+│   ├── collectors/
+│   │   ├── __init__.py
+│   │   └── log_collector.py
+│   │
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── event.py
+│   │   └── alert.py
+│   │
+│   └── pipeline/
+│       ├── __init__.py
+│       └── queue_manager.py
+│
 ├── tests/
 │   ├── __init__.py
 │   ├── test_alerts.py
 │   ├── test_baseline.py
 │   ├── test_detector.py
 │   └── test_log_monitor.py
+│
+├── config/
+│   └── log_patterns.json
+│
+├── logs/
+│   ├── hids_main.log
+│   └── alerts.log
+│
 ├── .gitignore
 ├── LICENSE
 ├── README.md
