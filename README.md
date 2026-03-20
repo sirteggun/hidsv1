@@ -10,6 +10,7 @@ HIDSV1 works both as a practical monitoring tool and as a research platform for 
 ## Project Structure 🗂️
 ```bash
 HIDSV1
+HIDSV1/
 ├── src/
 │   ├── __init__.py
 │   ├── alerts.py
@@ -46,7 +47,7 @@ HIDSV1
 │   └── test_log_monitor.py
 │
 ├── config/
-│   └── log_patterns.json
+│   └── log_patterns.json           
 │
 ├── logs/
 │   ├── hids_main.log

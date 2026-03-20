@@ -120,14 +120,26 @@ def generate_alert(event: Dict[str, Any]) -> Dict[str, Any]:
             "critical_anomaly": "CRITICAL"
         }
         event_type = event["type"]
-        severity = severity_map.get(event_type, "LOW")
+        normalized_type = event_type.lower()
+        mapped_severity = severity_map.get(normalized_type, "LOW")
+
+        custom_severity = event.get("severity")
+        valid_severities = {"LOW", "MEDIUM", "HIGH", "CRITICAL"}
+        if custom_severity is not None:
+            custom_severity_upper = str(custom_severity).upper()
+            if custom_severity_upper in valid_severities:
+                severity = custom_severity_upper
+            else:
+                severity = mapped_severity
+        else:
+            severity = mapped_severity
 
         if "timestamp" in event:
             timestamp = event["timestamp"]
         else:
             timestamp = datetime.now(timezone.utc).isoformat(timespec='milliseconds').replace('+00:00', 'Z')
 
-        description = event["message"]
+        description = str(event["message"])
 
         alert = {
             "severity": severity,
@@ -140,6 +152,13 @@ def generate_alert(event: Dict[str, Any]) -> Dict[str, Any]:
         for key, value in event.items():
             if key not in ["type", "message", "timestamp", "severity", "description", "event_type", "source"]:
                 alert[key] = value
+
+        send_alert(
+            message=description,
+            event_type=event_type,
+            severity=severity,
+            metadata=alert
+        )
 
         return alert
 
