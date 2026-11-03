@@ -173,7 +173,8 @@ class Worker:
             logger.warning("Worker %d received non-Event item: %s", self.worker_id, type(event))
             return 0
         logger.debug("Worker %d processing event: %s", self.worker_id, event.id, extra={"trace_id": event.id})
-        alerts = self.engine.process_event(event)
+        # FIX #1b: difesa contro engine che ritornano None invece di [].
+        alerts = self.engine.process_event(event) or []
         if alerts:
             for alert in alerts:
                 try:

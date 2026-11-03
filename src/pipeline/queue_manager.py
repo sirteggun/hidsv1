@@ -241,9 +241,17 @@ class PrioritizedQueue(Generic[T]):
 
         for wrapper in to_keep:
             self._queue.put(wrapper, block=False)
+            # FIX: bilancia la put() del wrapper gia' contato in precedenza.
+            # L'estrazione (get_nowait) NON decrementa piu' unfinished_tasks,
+            # quindi il re-put va compensato con un task_done() per non gonfiare
+            # il contatore.
+            self._queue.task_done()
 
         now = time.time()
         for wrapper in to_discard:
+            # FIX: bilancia la put() originale dell'item che stiamo scartando.
+            # Senza questo, ogni discard lascia un task pendente fantasma.
+            self._queue.task_done()
             self._metrics.record_discard(wrapper.priority, now)
             if self._on_discard:
                 self._on_discard(wrapper.item, "backpressure")
@@ -324,7 +332,10 @@ class PrioritizedQueue(Generic[T]):
         with self._lock:
             self._metrics.record_get(wait_time, now)
             self._metrics.record_priority_decrease(wrapper.priority)
-        self._queue.task_done()
+        # FIX: NON chiamare self._queue.task_done() qui. Il contratto di
+        # queue.Queue prevede che task_done() sia chiamato dal consumatore
+        # quando ha finito di processare l'item. Chiamarlo qui causava
+        # "ValueError: task_done() called too many times" al secondo get().
         logger.debug("Item extracted with priority %d, wait %.3fs, size %d", wrapper.priority, wait_time, self.qsize())
         return wrapper.item
 

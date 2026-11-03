@@ -1,10 +1,16 @@
+import re
 import time
+import logging
 import ipaddress
 from typing import Dict, Any, Optional, List
 from dataclasses import dataclass
 
 from src.alerts import trigger_alert
 from src.executor import PipelineExecutor
+
+logger = logging.getLogger(__name__)
+
+_IPV4_RE = re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}\b")
 
 
 @dataclass
@@ -227,6 +233,94 @@ class DetectionEngine:
 
         self._check_escalation_alert(ip, now)
         self._check_subnet_alert(ip, now)
+
+    def _process_ip(self, ip) -> None:
+        """Valida e inoltra un IP alla detection. Ignora IP malformati."""
+        try:
+            ipaddress.ip_address(ip)
+        except (ValueError, TypeError):
+            logger.warning("Invalid IP in event: %r", ip)
+            return
+        self.process_failed_login(ip)
+
+    def _handle_failed_login_event(self, event) -> None:
+        """Path primario: Event classificato come failed_login con data['ip']."""
+        if not isinstance(event.data, dict):
+            return
+        ip = event.data.get("ip")
+        if ip:
+            self._process_ip(ip)
+
+    def _handle_unknown_event(self, event) -> None:
+        """Fallback per Event classificati come 'unknown'.
+
+        Cerca un IPv4 valido + un marcatore di failure in `data`.
+        Path temporaneo finche' il collector non classifichera' correttamente.
+        """
+        if not isinstance(event.data, dict):
+            return
+        text_parts = [str(v) for v in event.data.values() if isinstance(v, str)]
+        raw = " ".join(text_parts)
+        raw_lower = raw.lower()
+        failure_markers = (
+            "fail", "invalid", "authentication", "denied", "rejected",
+            "unauthorized", "forbidden",
+        )
+        if not any(m in raw_lower for m in failure_markers):
+            return
+        for match in _IPV4_RE.finditer(raw):
+            candidate = match.group(0)
+            try:
+                ipaddress.ip_address(candidate)
+            except ValueError:
+                continue
+            self._process_ip(candidate)
+            return  # un solo IP per evento
+
+    def process_event(self, event) -> list:
+        """Bridge tra la pipeline Event e la logica IP-based di DetectionEngine.
+
+        Contratto attuale del worker:
+        - input: src.models.event.Event
+        - output: list (vuota oggi, gli alert sono side-effect)
+
+        Strategia: guarda il contenuto di `data` piu' che il `type`,
+        perche' il collector puo' assegnare tipi diversi a seconda dei
+        pattern in config/log_patterns.json.
+        """
+        from src.models.event import Event
+
+        if not isinstance(event, Event):
+            return []
+
+        # 1. Path primario: evento failed_login con data['ip'] gia' strutturato
+        if event.type == "failed_login":
+            self._handle_failed_login_event(event)
+            return []
+
+        # 2. Fallback permissivo: cerca IP + marker di failure in QUALSIASI
+        #    stringa dentro event.data, indipendentemente da event.type.
+        #    Copre collector che classificano come 'auth', 'security',
+        #    'bruteforce', 'unknown', o altro.
+        if isinstance(event.data, dict):
+            text_parts = [str(v) for v in event.data.values() if isinstance(v, str)]
+            raw = " ".join(text_parts)
+            raw_lower = raw.lower()
+            failure_markers = (
+                "fail", "invalid", "authentication", "denied", "rejected",
+                "unauthorized", "forbidden",
+            )
+            if any(m in raw_lower for m in failure_markers):
+                for match in _IPV4_RE.finditer(raw):
+                    candidate = match.group(0)
+                    try:
+                        ipaddress.ip_address(candidate)
+                    except ValueError:
+                        continue
+                    self._process_ip(candidate)
+                    break  # un solo IP per evento
+
+        return []
 
 
 def analyze_event(event: Dict[str, Any]) -> Dict[str, Any]:
